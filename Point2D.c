@@ -5,5 +5,5 @@
 
 bool Point2D_isValid(Point2D point)
 {
-  return !(point.x==UINT16_MAX);
+  return !(point.x==INT16_MAX);
 }

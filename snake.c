@@ -4,26 +4,63 @@
 #include "Renderer.h"
 #include "Render_objects.h"
 
+Point2D ktov(int key);
+
 int main(int argc, char** argv)
 {
     Renderer_initialize();
-
-//Temporary Testing area
-    
-    Snake* snake = Snake_create(10,10);
-    for(int i=0; i<5;i++) Snake_extend();
-    Render_Snake(snake);
-
-    getch();
-    Snake_delete(snake);
-
-
-//Repeat until escape key pressed:
-//Get input 
+    Snake* snake = Snake_create(5,40);
+    Snake_extend();
+    Snake_extend();
+    Snake_extend();
+    Snake_extend();
+    Snake_extend();
+    int c;
+    do 
+    {  
+        c=getch();        
+        Snake_setVelocity(ktov(c));
+        Snake_tickUpdate();
+        clear();
+        Render_Snake(snake);
+    }while(c!=27);
 //Process game logic
 //Use game state to update screen
 
 //Wait until next game tick
     Renderer_close();    
     return 0;
+}
+
+Vector2D ktov(int c)
+{
+    Vector2D ret;
+    switch (c)
+    {
+    case KEY_UP:
+        ret.x=0;
+        ret.y=1;
+        break;
+    
+    case KEY_DOWN:
+        ret.x=0;
+        ret.y=-1;
+        break;
+    
+    case KEY_LEFT:
+        ret.x=-1;
+        ret.y=0;
+        break;
+    
+    case KEY_RIGHT:
+        ret.x=1;
+        ret.y=0;
+        break;
+    
+    default:
+        ret.x=0;
+        ret.y=0;
+        break;
+    }
+    return ret;
 }

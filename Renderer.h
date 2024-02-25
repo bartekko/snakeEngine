@@ -1,7 +1,5 @@
 #pragma once
 
-#include <ncurses.h>
-
-#define Renderer_initialize()    initscr();curs_set(0);
-#define Renderer_close()         endwin()
-#define Renderer_refreshScreen() 
+void Renderer_initialize();
+void Renderer_close();
+void Renderer_refreshScreen();

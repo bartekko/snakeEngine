@@ -19,17 +19,32 @@ int Snake_delete(Snake* sn)
 {
     //Do nothing, currently the snake is statically allocated
 }
+
 void Snake_setVelocity(Vector2D newVelocity)
 {
-    //TODO
+    globsnake.velocity.x=newVelocity.x;
+    globsnake.velocity.y=newVelocity.y;
 }
+
 void Snake_tickUpdate()
 {
-    //TODO
+    for(int i=0;i<1023;i++)
+    {
+        if(Point2D_isValid(globsnake.segments[i+1])){
+            globsnake.segments[i].x=globsnake.segments[i+1].x;
+            globsnake.segments[i].y=globsnake.segments[i+1].y;
+
+        }
+        else{ //wait, what convention did I agree on with myself?
+            globsnake.segments[i].x+=globsnake.velocity.x;
+            globsnake.segments[i].y+=globsnake.velocity.y;
+            return;
+        }
+
+    }
 }
+
 void Snake_extend()
 {
     memmove(&globsnake.segments[1],&globsnake.segments[0],1023);
-    globsnake.segments[0].x=globsnake.segments[1].x-1;
-    globsnake.segments[0].y=globsnake.segments[1].y;
 }

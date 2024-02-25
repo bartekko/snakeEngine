@@ -5,8 +5,8 @@
 
 typedef struct
 {
-  uint16_t x;
-  uint16_t y; 
+  int16_t x;
+  int16_t y; 
 } Point2D;
 #define Vector2D Point2D
 
