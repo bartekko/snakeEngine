@@ -1,6 +1,6 @@
 phase 1:
-Render snake 
+Render snake: DONE
 Phase 2:
-Move snake on input:
+Move snake on input: DONE
 Phase 3: 
-Move snake on timer with input
+Move snake on timer with input: 

@@ -1,3 +1,4 @@
+#define KEY_ESC 27
 #include <ncurses.h>
 
 #include "Snake.h"
@@ -23,7 +24,7 @@ int main(int argc, char** argv)
         Snake_tickUpdate();
         clear();
         Render_Snake(snake);
-    }while(c!=27);
+    }while(c!=KEY_ESC);
 //Process game logic
 //Use game state to update screen
 
