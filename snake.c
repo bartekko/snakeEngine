@@ -31,6 +31,7 @@ int main(int argc, char** argv)
 
         //Game Logic
         Snake_setVelocity(ktov(c));
+        
         Snake_tickUpdate();
         
         if(Food_handleCollision(snake,food))
@@ -39,7 +40,6 @@ int main(int argc, char** argv)
             Point2D p={.x=rand()%20,.y=rand()%20};
             Food_destroy(food);
             food=Food_create(p);
-
         }
         //Rendering
         Renderer_nextFrame();

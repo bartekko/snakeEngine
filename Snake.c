@@ -1,5 +1,6 @@
 #include "Snake.h"
 #include <string.h>
+#include <ncurses.h>
 
 static Snake globsnake;
 Snake* Snake_create(int x, int y)
@@ -49,6 +50,10 @@ void Snake_tickUpdate()
             globsnake.segments[i].y+=globsnake.velocity.y;
             return;
         }
+        if(Snake_selfIntersects(&globsnake))
+        {
+            globsnake.segments[2]=Point2D_invalid;
+        }
 
     }
 }
@@ -68,4 +73,22 @@ Point2D* Snake_getHead(Snake* snake)
         }
     }
     return &snake->segments[MAX_SNAKE_LENGTH-1];
+}
+
+bool Snake_selfIntersects(Snake* snake)
+{
+    for(int i=0;Point2D_isValid(snake->segments[i+1]);i++)
+    {
+        int col_enable=false;
+        for(int j=i-1;j>=0;j--)
+        {
+            if(Point2D_cmp(&snake->segments[i],&snake->segments[j])==0){
+                if(col_enable)return true;
+            }
+            else{
+                col_enable=true;
+            }
+        }
+    }
+    return false;
 }
