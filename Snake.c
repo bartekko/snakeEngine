@@ -22,13 +22,22 @@ int Snake_delete(Snake* sn)
 
 void Snake_setVelocity(Vector2D newVelocity)
 {
-    globsnake.velocity.x=newVelocity.x;
-    globsnake.velocity.y=newVelocity.y;
+    //Disallow reversing direction until we can handle it properly
+    if(globsnake.velocity.x==-newVelocity.x 
+       && globsnake.velocity.y==-newVelocity.y)
+    {
+        return;
+    }
+    if(Point2D_isValid(newVelocity))
+    {
+        globsnake.velocity.x=newVelocity.x;
+        globsnake.velocity.y=newVelocity.y;
+    }
 }
 
 void Snake_tickUpdate()
 {
-    for(int i=0;i<1023;i++)
+    for(int i=0;i<MAX_SNAKE_LENGTH-1;i++)
     {
         if(Point2D_isValid(globsnake.segments[i+1])){
             globsnake.segments[i].x=globsnake.segments[i+1].x;
@@ -46,5 +55,17 @@ void Snake_tickUpdate()
 
 void Snake_extend()
 {
-    memmove(&globsnake.segments[1],&globsnake.segments[0],1023);
+    memmove(&globsnake.segments[1],&globsnake.segments[0],MAX_SNAKE_LENGTH-1);
+}
+
+Point2D* Snake_getHead(Snake* snake)
+{
+    for(int i=0;i<MAX_SNAKE_LENGTH-1;i++)
+    {
+        if(!Point2D_isValid(snake->segments[i+1]))
+        {
+            return &snake->segments[i];
+        }
+    }
+    return &snake->segments[MAX_SNAKE_LENGTH-1];
 }

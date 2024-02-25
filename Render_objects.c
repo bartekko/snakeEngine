@@ -1,4 +1,5 @@
 #define SNAKE_SEGMENT_SYMBOL '*'
+#define FOOD_SYMBOL          '#'
 #include <ncurses.h>
 
 #include "Snake.h"
@@ -19,4 +20,11 @@ void Render_Snake(Snake* snake)
 
         
     }
+}
+
+void Render_Food(Food* food)
+{
+    mvaddch(food->position.y,
+            food->position.x,
+            FOOD_SYMBOL);
 }

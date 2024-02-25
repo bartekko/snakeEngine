@@ -1,34 +1,58 @@
-#define KEY_ESC 27
+#define EXIT_KEY 'q'
 #include <ncurses.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "Snake.h"
 #include "Renderer.h"
 #include "Render_objects.h"
+#include "Food.h"
 
 Point2D ktov(int key);
 
 int main(int argc, char** argv)
 {
     Renderer_initialize();
-    Snake* snake = Snake_create(5,40);
+    srand(time(NULL));
+    Snake* snake = Snake_create(5,20);
     Snake_extend();
     Snake_extend();
     Snake_extend();
     Snake_extend();
     Snake_extend();
+    Point2D p={.x=rand()%20,.y=rand()%20};
+    Food* food=Food_create(p);
     int c;
+    bool exit=false;
     do 
     {  
-        c=getch();        
+        //Input
+        c=Renderer_scanInput(); 
+
+        //Game Logic
         Snake_setVelocity(ktov(c));
         Snake_tickUpdate();
-        clear();
-        Render_Snake(snake);
-    }while(c!=KEY_ESC);
-//Process game logic
-//Use game state to update screen
+        
+        if(Food_handleCollision(snake,food))
+        {
+            Snake_extend();
+            Point2D p={.x=rand()%20,.y=rand()%20};
+            Food_destroy(food);
+            food=Food_create(p);
 
-//Wait until next game tick
+        }
+        //Rendering
+        Renderer_nextFrame();
+        Render_Snake(snake);
+        Render_Food(food);
+        Renderer_waitUntilNextFrame();
+
+        if(c==EXIT_KEY) exit=true;
+
+    }while(!exit);
+
+    Snake_delete(snake);
+    Food_destroy(food);
     Renderer_close();    
     return 0;
 }
@@ -59,8 +83,7 @@ Vector2D ktov(int c)
         break;
     
     default:
-        ret.x=0;
-        ret.y=0;
+        ret=Point2D_invalid;
         break;
     }
     return ret;
