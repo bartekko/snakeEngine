@@ -24,7 +24,7 @@ int Snake_delete(Snake* sn)
 void Snake_setVelocity(Vector2D newVelocity)
 {
     //Disallow reversing direction until we can handle it properly
-    if(globsnake.velocity.x==-newVelocity.x 
+    if(globsnake.velocity.x==-newVelocity.x
        && globsnake.velocity.y==-newVelocity.y)
     {
         return;
@@ -91,4 +91,16 @@ bool Snake_selfIntersects(Snake* snake)
         }
     }
     return false;
+}
+
+int Snake_getLength()
+{
+    for( int i=0;i<1023;i++)
+    {
+        if(!Point2D_isValid(globsnake.segments[i]))
+        {
+            return i-1;
+        }
+    }
+    return MAX_SNAKE_LENGTH;
 }

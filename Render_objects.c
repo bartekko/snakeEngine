@@ -1,10 +1,13 @@
 #define SNAKE_SEGMENT_SYMBOL '*'
 #define FOOD_SYMBOL          '#'
 #define BORDER_SYMBOL        '='
+
 #include <ncurses.h>
+#include <stdlib.h>
 
 #include "Snake.h"
 #include "Render_objects.h"
+#include "Hud.h"
 
 void Render_Snake(Snake* snake)
 {
@@ -14,12 +17,12 @@ void Render_Snake(Snake* snake)
         segment.x=snake->segments[i].x;
         segment.y=snake->segments[i].y;
         if(!Point2D_isValid(segment)) {break;}
-        
+
         mvaddch(snake->segments[i].y,
                 snake->segments[i].x,
                 SNAKE_SEGMENT_SYMBOL);
 
-        
+
     }
 }
 
@@ -52,4 +55,10 @@ void Render_Board(Board* board)
     {
         mvaddch(board->size.y,i,BORDER_SYMBOL);
     }
+}
+
+void Render_HUD(Hud* hud)
+{
+    mvprintw(0,0,"Score: %d",hud->curScore);
+    mvprintw(1,0,"HScore: %d",hud->hiScore);
 }

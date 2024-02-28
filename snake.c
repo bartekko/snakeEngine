@@ -10,31 +10,31 @@
 #include "Board.h"
 
 Point2D ktov(int key);
+int snake_getScore();
 
 int main(int argc, char** argv)
 {
     Renderer_initialize();
     srand(time(NULL));
- 
+
     Snake* snake = Snake_create(5,20);
-    Board* board = Board_create((Point2D){.x=20,.y=20});
+    Board* board = Board_create((Point2D){.x=40,.y=20});
     Point2D p={.x=rand()%20,.y=rand()%20};
     Food* food=Food_create(p);
+    Hud* hud=HUD_Create();
     int c;
     bool exit=false;
 
-    do 
-    {  
+    do
+    {
         //Input
-        c=Renderer_scanInput(); 
-
-
+        c=Renderer_scanInput();
 
         //Game Logic
         Snake_setVelocity(ktov(c));
-        snake_GetScore()        
+        HUD_updateScore(snake_getScore());
         Snake_tickUpdate();
-        
+
         if(Food_handleCollision(snake,food))
         {
             Snake_extend();
@@ -56,6 +56,7 @@ int main(int argc, char** argv)
         Render_Snake(snake);
         Render_Food(food);
         Render_Board(board);
+        Render_HUD(hud);
         Renderer_waitUntilNextFrame();
 
         if(c==EXIT_KEY) exit=true;
@@ -64,7 +65,7 @@ int main(int argc, char** argv)
 
     Snake_delete(snake);
     Food_destroy(food);
-    Renderer_close();    
+    Renderer_close();
     return 0;
 }
 
@@ -77,25 +78,30 @@ Vector2D ktov(int c)
         ret.x=0;
         ret.y=1;
         break;
-    
+
     case KEY_DOWN:
         ret.x=0;
         ret.y=-1;
         break;
-    
+
     case KEY_LEFT:
         ret.x=-1;
         ret.y=0;
         break;
-    
+
     case KEY_RIGHT:
         ret.x=1;
         ret.y=0;
         break;
-    
+
     default:
         ret=Point2D_invalid;
         break;
     }
     return ret;
+}
+
+int snake_getScore()
+{
+    return Snake_getLength();
 }

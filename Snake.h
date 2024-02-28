@@ -17,3 +17,4 @@ void Snake_tickUpdate();
 void Snake_extend();
 Point2D* Snake_getHead(Snake* snake);
 bool Snake_selfIntersects(Snake* snake);
+int Snake_getLength();
