@@ -7,6 +7,7 @@
 #include "Renderer.h"
 #include "Render_objects.h"
 #include "Food.h"
+#include "Board.h"
 
 Point2D ktov(int key);
 
@@ -14,24 +15,24 @@ int main(int argc, char** argv)
 {
     Renderer_initialize();
     srand(time(NULL));
+ 
     Snake* snake = Snake_create(5,20);
-    Snake_extend();
-    Snake_extend();
-    Snake_extend();
-    Snake_extend();
-    Snake_extend();
+    Board* board = Board_create((Point2D){.x=20,.y=20});
     Point2D p={.x=rand()%20,.y=rand()%20};
     Food* food=Food_create(p);
     int c;
     bool exit=false;
+
     do 
     {  
         //Input
         c=Renderer_scanInput(); 
 
+
+
         //Game Logic
         Snake_setVelocity(ktov(c));
-        
+        snake_GetScore()        
         Snake_tickUpdate();
         
         if(Food_handleCollision(snake,food))
@@ -40,11 +41,21 @@ int main(int argc, char** argv)
             Point2D p={.x=rand()%20,.y=rand()%20};
             Food_destroy(food);
             food=Food_create(p);
+
         }
+        if(Board_SnakeCollision(board,snake))
+        {
+            Snake_delete(snake);
+            Snake_create(rand()%20,rand()%20);
+            Snake_setVelocity((Point2D){.x=0,.y=0});
+
+        }
+
         //Rendering
         Renderer_nextFrame();
         Render_Snake(snake);
         Render_Food(food);
+        Render_Board(board);
         Renderer_waitUntilNextFrame();
 
         if(c==EXIT_KEY) exit=true;

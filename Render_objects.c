@@ -1,5 +1,6 @@
 #define SNAKE_SEGMENT_SYMBOL '*'
 #define FOOD_SYMBOL          '#'
+#define BORDER_SYMBOL        '='
 #include <ncurses.h>
 
 #include "Snake.h"
@@ -27,4 +28,28 @@ void Render_Food(Food* food)
     mvaddch(food->position.y,
             food->position.x,
             FOOD_SYMBOL);
+}
+
+void Render_Board(Board* board)
+{
+    //Top Border
+    for(int i=0;i<board->size.x;i++)
+    {
+        mvaddch(0,i,BORDER_SYMBOL);
+    }
+    //Left Border
+    for(int i=0;i<board->size.y;i++)
+    {
+        mvaddch(i,0,BORDER_SYMBOL);
+    }
+    //Right Border
+    for(int i=0;i<board->size.x;i++)
+    {
+        mvaddch(i,board->size.x,BORDER_SYMBOL);
+    }
+    //Bottom Border
+    for(int i=0;i<board->size.x;i++)
+    {
+        mvaddch(board->size.y,i,BORDER_SYMBOL);
+    }
 }
