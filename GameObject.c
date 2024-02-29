@@ -13,7 +13,7 @@ bool GameObject_HandleMessage(Message* msg)
 
 }
 
-void* (*a_cf[])(Point2D)={Snake_create};//,Food_create,Board_create,HUD_Create};
+void* (*a_cf[])(Point2D)={Snake_create,Food_create};//,Board_create,HUD_Create};
 GameObject* GameObject_create(Object_Create_req req)
 {
     for(int i=0; i<MAX_GAME_OBJECTS;i++)

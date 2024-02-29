@@ -1,16 +1,19 @@
 #include "Food.h"
 #include "Snake.h"
+#include "stdlib.h"
+
 Food globfood;
 
-Food* Food_create(Point2D _position)
+void* Food_create(Point2D position)
 {
-    globfood.position=_position;
-    return &globfood;
+    Food* food=malloc(sizeof(Food));
+    food->position=position;
+    return food;
 }
 
 void Food_destroy(Food* food)
 {
-    //Does nothing, food is currently statically allocated
+    free(food);
 }
 
 int Food_handleCollision(Snake* snake,Food* food)

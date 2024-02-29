@@ -149,8 +149,8 @@ int snake_getScore()
 
 Object_Create_req initialize_req[]=
 {
-{.objectType=OT_SNAKE,.location={.x=10,.y=10}}
-//{.objectType=OT_SNAKE,.x=10,.y=10},
+{.objectType=OT_SNAKE,.location={.x=10,.y=10}},
+{.objectType=OT_FOOD ,.location={.x=20,.y=10}}
 //{.objectType=OT_SNAKE,.x=10,.y=10},
 };
 const int OBJ_INITIALIZE_COUNT=sizeof(initialize_req)/sizeof(Object_Create_req);
@@ -164,7 +164,6 @@ void game_Initialize()
     {
         GameObject_create(initialize_req[i]);
     }
-//    Snake* snake = Snake_create((Point2D){.x=5,.y=10});
 //    Board* board = Board_create((Point2D){.x=40,.y=20});
 //    Point2D p={.x=rand()%20,.y=rand()%20};
 //    Food* food=Food_create(p);
@@ -176,7 +175,7 @@ bool game_HandleMessage(Message* msg)
     return GameObject_HandleMessage(msg);
 }
 
-ticUpdateFunction a_tuf[]={Snake_tickUpdate};
+ticUpdateFunction a_tuf[]={Snake_tickUpdate,NULL,NULL};
 void game_AdvanceTick()
 {
     for(int i=0;i<MAX_GAME_OBJECTS;i++)
@@ -184,12 +183,15 @@ void game_AdvanceTick()
         if(GameObject_Exists(i))
         {
             GameObject* go = GameObject_get(i);
-            a_tuf[go->ot](go->objData);
+            if(a_tuf[go->ot])
+            {
+                a_tuf[go->ot](go->objData);
+            }
         }
     }
 }
 
-ticUpdateFunction a_rf[]={Render_Snake};
+rendererFunction a_rf[]={Render_Snake,Render_Food};
 void game_RenderScreen()
 {
     Renderer_nextFrame();
