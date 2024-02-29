@@ -1,0 +1,4 @@
+//         NAME       CONSTRUCTORFUNCTION    DESTRUCTORFUNCTION      TICUPDATER           MESSAGEHANDLER      RENDERFUNCTION
+
+GAMEOBJDEF(Snake,     Snake_create,          Snake_destroy,          Snake_ticUpdate,     Snake_msgHandler,   Snake_render
+GAMEOBJDEF(Food,      Food_create,           Food_destroy,           Food_ticUpdate,      Food_msgHandler,    Food_render

@@ -1,8 +1,8 @@
 #include "Hud.h"
-
+#include "Point2D.h"
 Hud globhud;
 
-Hud* HUD_Create()
+Hud* HUD_Create(Point2D p)
 {
     globhud.curScore=0;
     globhud.hiScore=0;

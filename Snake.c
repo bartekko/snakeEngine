@@ -1,66 +1,68 @@
+#define MAX_SNAKE_LENGTH 1024
 #include "Snake.h"
+#include "Point2D.h"
+#include "GameObject.h"
+#include "stdlib.h"
+
+
 #include <string.h>
 #include <ncurses.h>
 
-static Snake globsnake;
-Snake* Snake_create(int x, int y)
+void* Snake_create(Point2D p)
 {
-    globsnake.segments[0].x=x;
-    globsnake.segments[0].y=y;
-
-    //invalidate all other segments
-    for(int i=1;i<1024;i++)
-    {
-        globsnake.segments[i].x=INT16_MAX;
-    }
-    return &globsnake;
+    Snake* res=malloc(sizeof(Snake));
+    res->segments[0].x=p.x;
+    res->segments[0].y=p.y;
+    res->velocity.x=1;
+    res->segments[1].x=INT16_MAX;
+    return (void*)res;
 }
 
-int Snake_delete(Snake* sn)
+int Snake_delete(Snake* snake)
 {
-    //Do nothing, currently the snake is statically allocated
+    free(snake);
 }
 
-void Snake_setVelocity(Vector2D newVelocity)
+void Snake_setVelocity(Snake* snake, Vector2D newVelocity)
 {
     //Disallow reversing direction until we can handle it properly
-    if(globsnake.velocity.x==-newVelocity.x
-       && globsnake.velocity.y==-newVelocity.y)
+    if(snake->velocity.x==-newVelocity.x
+       && snake->velocity.y==-newVelocity.y)
     {
         return;
     }
     if(Point2D_isValid(newVelocity))
     {
-        globsnake.velocity.x=newVelocity.x;
-        globsnake.velocity.y=newVelocity.y;
+        snake->velocity.x=newVelocity.x;
+        snake->velocity.y=newVelocity.y;
     }
 }
 
-void Snake_tickUpdate()
+void Snake_tickUpdate(Snake* snake)
 {
     for(int i=0;i<MAX_SNAKE_LENGTH-1;i++)
     {
-        if(Point2D_isValid(globsnake.segments[i+1])){
-            globsnake.segments[i].x=globsnake.segments[i+1].x;
-            globsnake.segments[i].y=globsnake.segments[i+1].y;
+        if(Point2D_isValid(snake->segments[i+1])){
+            snake->segments[i].x=snake->segments[i+1].x;
+            snake->segments[i].y=snake->segments[i+1].y;
 
         }
         else{ //wait, what convention did I agree on with myself?
-            globsnake.segments[i].x+=globsnake.velocity.x;
-            globsnake.segments[i].y+=globsnake.velocity.y;
+            snake->segments[i].x+=snake->velocity.x;
+            snake->segments[i].y+=snake->velocity.y;
             return;
         }
-        if(Snake_selfIntersects(&globsnake))
+        if(Snake_selfIntersects(snake))
         {
-            globsnake.segments[2]=Point2D_invalid;
+            snake->segments[2]=Point2D_invalid;
         }
 
     }
 }
 
-void Snake_extend()
+void Snake_extend(Snake* snake)
 {
-    memmove(&globsnake.segments[1],&globsnake.segments[0],MAX_SNAKE_LENGTH-1);
+    memmove(&snake->segments[1],&snake->segments[0],sizeof(Point2D)*(MAX_SNAKE_LENGTH-1));
 }
 
 Point2D* Snake_getHead(Snake* snake)
@@ -93,11 +95,11 @@ bool Snake_selfIntersects(Snake* snake)
     return false;
 }
 
-int Snake_getLength()
+int Snake_getLength(Snake* sn)
 {
     for( int i=0;i<1023;i++)
     {
-        if(!Point2D_isValid(globsnake.segments[i]))
+        if(!Point2D_isValid(sn->segments[i]))
         {
             return i-1;
         }
