@@ -1,8 +1,10 @@
 
 #include <ncurses.h>
 
+#include "Message.h"
+
 void Renderer_initialize()
-{    
+{
     initscr();
     curs_set(0);
     keypad(stdscr, TRUE);
@@ -13,7 +15,7 @@ void Renderer_close()
 {
     endwin();
 }
-void Renderer_refreshScreen() 
+void Renderer_refreshScreen()
 {
     refresh();
 }
@@ -24,10 +26,10 @@ int Renderer_scanInput()
     int c=0;
     if(glob_c!=ERR)
     {
-        c=glob_c;
+        Message_send(MSGTGT_GAME_ENGINE,&glob_c,1);
     }
     glob_c=0;
-    return c; 
+    return c;
 }
 void Renderer_nextFrame()
 {

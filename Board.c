@@ -3,7 +3,7 @@
 
 Board globoard;
 
-Board* Board_create(Point2D size)
+void* Board_create(Point2D size)
 {
     globoard.size=size;
     return &globoard;
@@ -22,7 +22,7 @@ bool Board_SnakeCollision(Board* board, Snake* snake)
         head->y >= board->size.y)
     {
         return true;
-    }    
+    }
     return false;
 
 }

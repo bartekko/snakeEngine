@@ -18,8 +18,8 @@ typedef struct GameObject {
 } GameObject;
 
 //bool GameObject_isValid(int n);
-GameObject* GameObject_create(Object_Create_req req);
-void GameObject_delete(int ID);
+GameObject* GameObject_create(Message msg);
+void GameObject_delete(Message msg);
 bool GameObject_Exists(int ID);
 GameObject* GameObject_get(int ID);
 

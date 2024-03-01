@@ -20,18 +20,16 @@ bool game_HandleMessage(Message* msg);
 void game_AdvanceTick();
 void game_RenderScreen();
 
-typedef struct
-{
-    bool quit;
-} Game_Message;
-
-#define MSGTGT_GAME_ENGINE -1
+GameObject* player;
 int main(int argc, char** argv)
 {
     game_Initialize();
     bool quit=false;
     while (true)
     {
+
+        Renderer_scanInput();
+
         Message* msg;
         while((msg = Message_receive())!=NULL)
         {
@@ -40,11 +38,10 @@ int main(int argc, char** argv)
             {
                 if(msg->targetID==MSGTGT_GAME_ENGINE)
                 {
-                    Game_Message* msgdata=(Game_Message*)(msg->data);
-                    if(msgdata->quit)
+                    msg_GameMessage* gameMessage=(msg_GameMessage*)&(msg->c.gameMessage);
+                    if(gameMessage->quit)
                     quit=true;
                     msg->handled==true;
-
                 }
 
                 printf("Warning: Message unhandled");
@@ -147,15 +144,15 @@ int snake_getScore()
 }
 */
 
-Object_Create_req initialize_req[]=
+Message initialize_req[]=
 {
-{.objectType=OT_SNAKE,.location={.x=10,.y=10}},
-{.objectType=OT_FOOD ,.location={.x=20,.y=10}}
-//{.objectType=OT_SNAKE,.x=10,.y=10},
+{.c.create={.objectType=OT_SNAKE,.location={.x=10,.y=10}}},
+{.c.create={.objectType=OT_FOOD, .location={.x=20,.y=10}}},
+{.c.create={.objectType=OT_BOARD, .location={.x=40,.y=20}}},
 };
-const int OBJ_INITIALIZE_COUNT=sizeof(initialize_req)/sizeof(Object_Create_req);
+const int OBJ_INITIALIZE_COUNT=sizeof(initialize_req)/sizeof(Message);
 
-
+//initializes
 void game_Initialize()
 {
     Renderer_initialize();
@@ -164,9 +161,6 @@ void game_Initialize()
     {
         GameObject_create(initialize_req[i]);
     }
-//    Board* board = Board_create((Point2D){.x=40,.y=20});
-//    Point2D p={.x=rand()%20,.y=rand()%20};
-//    Food* food=Food_create(p);
 //    Hud* hud=HUD_Create(p);
 }
 
@@ -191,7 +185,7 @@ void game_AdvanceTick()
     }
 }
 
-rendererFunction a_rf[]={Render_Snake,Render_Food};
+rendererFunction a_rf[]={Render_Snake,Render_Food,Render_Board};
 void game_RenderScreen()
 {
     Renderer_nextFrame();

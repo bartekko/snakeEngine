@@ -16,7 +16,7 @@ MessageBuffer msgBuf;
 void Message_send(int targetID,void* data, size_t len)
 {
   msgBuf.messages[msgBuf.writePos].targetID=targetID;
-  memcpy(&msgBuf.messages->data,data,len);
+  memcpy(&msgBuf.messages->c,data,len);
 msgBuf.writePos++;
 }
 Message*  Message_receive()

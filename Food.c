@@ -2,7 +2,6 @@
 #include "Snake.h"
 #include "stdlib.h"
 
-Food globfood;
 
 void* Food_create(Point2D position)
 {

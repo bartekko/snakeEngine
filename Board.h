@@ -9,6 +9,6 @@ typedef struct{
     Point2D size;
 } Board;
 
-Board* Board_create(Point2D size);
+void* Board_create(Point2D size);
 void Board_delete(Board* board);
 bool Board_SnakeCollision(Board* board, Snake* snake);
