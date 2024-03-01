@@ -13,7 +13,7 @@ typedef struct
 void* Snake_create(Point2D p);
 int Snake_delete(Snake* sn);
 void Snake_setVelocity(Snake* sn, Vector2D newVelocity);
-void Snake_tickUpdate(Snake* sn);
+bool Snake_msgHandler(void* sn,Message* msg);
 void Snake_extend(Snake* sn);
 Point2D* Snake_getHead(Snake* snake);
 bool Snake_selfIntersects(Snake* snake);

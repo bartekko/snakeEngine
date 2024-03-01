@@ -8,11 +8,6 @@
 #include "Hud.h"
 GameObject objects[MAX_GAME_OBJECTS];
 
-bool GameObject_HandleMessage(Message* msg)
-{
-
-}
-
 void* (*a_cf[])(Point2D)={Snake_create,Food_create,Board_create};//,HUD_Create};
 GameObject* GameObject_create(Message msg)
 {

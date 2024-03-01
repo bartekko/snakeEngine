@@ -8,7 +8,7 @@ typedef struct GameObject GameObject;
 
 typedef GameObject* (*creatorFunction)(Message);
 typedef int    (*destroyerFunction)();
-typedef void   (*ticUpdateFunction)();
+typedef bool   (*messageHandler)(void* ,Message* );
 typedef void   (*rendererFunction)();
 typedef bool   (*msgHandlerFunction)(Message*);
 
@@ -22,5 +22,3 @@ GameObject* GameObject_create(Message msg);
 void GameObject_delete(Message msg);
 bool GameObject_Exists(int ID);
 GameObject* GameObject_get(int ID);
-
-bool GameObject_HandleMessage(Message* msg);

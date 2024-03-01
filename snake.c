@@ -2,6 +2,8 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdio.h>
+
 
 #include "Snake.h"
 #include "Renderer.h"
@@ -10,7 +12,8 @@
 #include "Board.h"
 #include "Message.h"
 #include "GameObject.h"
-#include <stdio.h>
+#include "ERROR.h"
+#include "input.h"
 
 Point2D ktov(int key);
 int snake_getScore();
@@ -28,9 +31,11 @@ int main(int argc, char** argv)
     while (true)
     {
 
-        Renderer_scanInput();
+        Input_scan();
 
         Message* msg;
+        game_AdvanceTick();
+
         while((msg = Message_receive())!=NULL)
         {
             game_HandleMessage(msg);
@@ -48,10 +53,9 @@ int main(int argc, char** argv)
                 msg->handled==true;
             }
         }
-        game_AdvanceTick();
         game_RenderScreen();
 
-        Renderer_waitUntilNextFrame();
+        Input_waitUntilNextFrame();
 
     }while(!quit)
     return 0;
@@ -65,12 +69,12 @@ int main(int argc, char** argv)
     do
     {
         //Input
-        c=Renderer_scanInput();
+        c=Input_scan();
 
         //Game Logic
         Snake_setVelocity(ktov(c));
         HUD_updateScore(snake_getScore());
-        Snake_tickUpdate();
+        Snake_msgHandler();
 
         if(Food_handleCollision(snake,food))
         {
@@ -161,26 +165,40 @@ void game_Initialize()
     {
         GameObject_create(initialize_req[i]);
     }
+
+
 //    Hud* hud=HUD_Create(p);
 }
 
+messageHandler a_msgh[]={Snake_msgHandler,NULL,NULL};
+
 bool game_HandleMessage(Message* msg)
 {
-    return GameObject_HandleMessage(msg);
+    if(!GameObject_Exists(msg->targetID))
+    {
+        ERROR("Trying to pass message to nonexistent object");
+        msg->handled=true;
+        return false;
+    }
+    {
+        GameObject* go = GameObject_get(msg->targetID);
+        if(a_msgh[go->ot])
+        {
+            a_msgh[go->ot](go->objData,msg);
+            msg->handled=true;
+            return true;
+        }
+    }
+
 }
 
-ticUpdateFunction a_tuf[]={Snake_tickUpdate,NULL,NULL};
 void game_AdvanceTick()
 {
     for(int i=0;i<MAX_GAME_OBJECTS;i++)
     {
         if(GameObject_Exists(i))
         {
-            GameObject* go = GameObject_get(i);
-            if(a_tuf[go->ot])
-            {
-                a_tuf[go->ot](go->objData);
-            }
+            Message_send(MT_TICK,i,NULL,0);
         }
     }
 }

@@ -13,14 +13,24 @@ int readPos;
 
 MessageBuffer msgBuf;
 
-void Message_send(int targetID,void* data, size_t len)
+void Message_send(MessageType mt, int targetID,void* data, size_t len)
 {
+  msgBuf.messages[msgBuf.writePos].type=mt;
   msgBuf.messages[msgBuf.writePos].targetID=targetID;
-  memcpy(&msgBuf.messages->c,data,len);
-msgBuf.writePos++;
+  msgBuf.messages[msgBuf.writePos].handled==false;
+  if(len && data)
+  {
+    memcpy(&msgBuf.messages[msgBuf.writePos].c,data,len);
+  }
+  msgBuf.writePos=(msgBuf.writePos+1)%MESSAGE_BUFFER_SIZE;
 }
 Message*  Message_receive()
 {
+  if(msgBuf.readPos>= MESSAGE_BUFFER_SIZE)
+  {
+    msgBuf.readPos=0;
+  }
+
   if(msgBuf.readPos>=msgBuf.writePos)
   {
     return NULL;

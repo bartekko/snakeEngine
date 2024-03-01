@@ -21,6 +21,7 @@ typedef enum{
 typedef enum{
   MT_CREATE_OBJ=0,
   MT_DESTROY_OBJ,
+  MT_TICK,
   MT_INPUT,
   MT_COLLISION,
   MT_COUNT,
@@ -66,5 +67,5 @@ typedef struct Message
 } Message;
 
 
-void Message_send(int targetID,void* data, size_t len);
+void Message_send(MessageType mt, int targetID,void* data, size_t len);
 Message*  Message_receive();

@@ -3,7 +3,7 @@
 #include "Point2D.h"
 #include "GameObject.h"
 #include "stdlib.h"
-
+#include "input.h"
 
 #include <string.h>
 #include <ncurses.h>
@@ -15,7 +15,14 @@ void* Snake_create(Point2D p)
     res->segments[0].y=p.y;
     res->velocity.x=1;
     res->segments[1].x=INT16_MAX;
+
+    Input_registerObject(0,'w',IN_UP);
+    Input_registerObject(0,'s',IN_DOWN);
+    Input_registerObject(0,'a',IN_LEFT);
+    Input_registerObject(0,'d',IN_RIGHT);
+
     return (void*)res;
+
 }
 
 int Snake_delete(Snake* snake)
@@ -38,8 +45,12 @@ void Snake_setVelocity(Snake* snake, Vector2D newVelocity)
     }
 }
 
-void Snake_tickUpdate(Snake* snake)
+bool Snake_msgHandler(void* sn, Message* msg)
 {
+    Snake* snake=(Snake*)sn;
+
+    if(msg->type==MT_TICK)
+    {
     for(int i=0;i<MAX_SNAKE_LENGTH-1;i++)
     {
         if(Point2D_isValid(snake->segments[i+1])){
@@ -50,7 +61,7 @@ void Snake_tickUpdate(Snake* snake)
         else{ //wait, what convention did I agree on with myself?
             snake->segments[i].x+=snake->velocity.x;
             snake->segments[i].y+=snake->velocity.y;
-            return;
+            return true;
         }
         if(Snake_selfIntersects(snake))
         {
@@ -58,6 +69,38 @@ void Snake_tickUpdate(Snake* snake)
         }
 
     }
+        return true;
+    }
+    if(msg->type==MT_INPUT)
+    {
+        Point2D tp;
+        switch (msg->c.input)
+        {
+        case IN_UP:
+            tp.x=0;
+            tp.y=1;
+            break;
+        case IN_DOWN:
+            tp.x=0;
+            tp.y=-1;
+            break;
+        case IN_LEFT:
+            tp.x=-1;
+            tp.y=0;
+            break;
+        case IN_RIGHT:
+            tp.x=1;
+            tp.y=0;
+
+            break;
+
+        default:
+            tp=Point2D_invalid;
+            break;
+        }
+        Snake_setVelocity(snake,tp);
+    }
+
 }
 
 void Snake_extend(Snake* snake)
