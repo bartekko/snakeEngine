@@ -53,6 +53,10 @@ typedef enum{
   IN_EXIT
 } msg_Input;
 
+typedef struct msg_Collision{
+    int other;
+} msg_Collision;
+
 typedef struct Message
 {
   MessageType type;
@@ -63,6 +67,7 @@ typedef struct Message
     msg_DestroyObject destroy;
     msg_GameMessage   gameMessage;
     msg_Input         input;
+    msg_Collision     collision;
   } c; //for "content"
 } Message;
 

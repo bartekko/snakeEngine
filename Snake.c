@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "stdlib.h"
 #include "input.h"
+#include "Collision.h"
 
 #include <string.h>
 #include <ncurses.h>
@@ -14,12 +15,13 @@ void* Snake_create(Point2D p)
     res->segments[0].x=p.x;
     res->segments[0].y=p.y;
     res->velocity.x=1;
-    res->segments[1].x=INT16_MAX;
+    res->segments[1]=Point2D_invalid;
 
     Input_registerObject(0,'w',IN_UP);
     Input_registerObject(0,'s',IN_DOWN);
     Input_registerObject(0,'a',IN_LEFT);
     Input_registerObject(0,'d',IN_RIGHT);
+    Collider_Register(0,&res->segments[0]);
 
     return (void*)res;
 
@@ -48,9 +50,9 @@ void Snake_setVelocity(Snake* snake, Vector2D newVelocity)
 bool Snake_msgHandler(void* sn, Message* msg)
 {
     Snake* snake=(Snake*)sn;
-
-    if(msg->type==MT_TICK)
+    switch (msg->type)
     {
+        case MT_TICK:
     for(int i=0;i<MAX_SNAKE_LENGTH-1;i++)
     {
         if(Point2D_isValid(snake->segments[i+1])){
@@ -69,9 +71,9 @@ bool Snake_msgHandler(void* sn, Message* msg)
         }
 
     }
-        return true;
-    }
-    if(msg->type==MT_INPUT)
+    return true;
+
+    case MT_INPUT:
     {
         Point2D tp;
         switch (msg->c.input)
@@ -99,25 +101,28 @@ bool Snake_msgHandler(void* sn, Message* msg)
             break;
         }
         Snake_setVelocity(snake,tp);
+        return true;
     }
 
+    case MT_COLLISION:
+        GameObject* other=GameObject_get(msg->c.collision.other);
+        if(other->ot==OT_FOOD)
+        {
+            Snake_extend(snake);
+        }
+        return true;
+    }//end of switch statement
 }
 
 void Snake_extend(Snake* snake)
 {
     memmove(&snake->segments[1],&snake->segments[0],sizeof(Point2D)*(MAX_SNAKE_LENGTH-1));
+    snake->head=&snake->segments[snake->length-1];
 }
 
 Point2D* Snake_getHead(Snake* snake)
 {
-    for(int i=0;i<MAX_SNAKE_LENGTH-1;i++)
-    {
-        if(!Point2D_isValid(snake->segments[i+1]))
-        {
-            return &snake->segments[i];
-        }
-    }
-    return &snake->segments[MAX_SNAKE_LENGTH-1];
+    return snake->head;
 }
 
 bool Snake_selfIntersects(Snake* snake)

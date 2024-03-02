@@ -8,6 +8,8 @@ typedef struct
 {
     Point2D segments[MAX_SNAKE_LENGTH];
     Vector2D velocity;
+    Point2D* head;
+    int length;
 } Snake;
 
 void* Snake_create(Point2D p);

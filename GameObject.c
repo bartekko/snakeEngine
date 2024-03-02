@@ -30,5 +30,6 @@ bool GameObject_Exists(int ID)
 
 GameObject* GameObject_get(int ID)
 {
+    if(!GameObject_Exists) return NULL;
     return &objects[ID];
 }

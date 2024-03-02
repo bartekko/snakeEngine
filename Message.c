@@ -26,9 +26,10 @@ void Message_send(MessageType mt, int targetID,void* data, size_t len)
 }
 Message*  Message_receive()
 {
-  if(msgBuf.readPos>= MESSAGE_BUFFER_SIZE)
+  if(msgBuf.readPos>= msgBuf.writePos)
   {
     msgBuf.readPos=0;
+    msgBuf.writePos=0;
   }
 
   if(msgBuf.readPos>=msgBuf.writePos)

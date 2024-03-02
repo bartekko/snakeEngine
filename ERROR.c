@@ -1,6 +1,13 @@
 #include "ERROR.h"
 #include <stdio.h>
-void ERROR(const char* err)
+
+char* last_erreur=NULL;
+void ERROR(char* err)
 {
-    printf("%s",err);
+    last_erreur=err;
+}
+
+char* ERROR_get()
+{
+    return last_erreur;
 }

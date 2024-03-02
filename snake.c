@@ -1,4 +1,4 @@
-#define EXIT_KEY 'q'
+    #define EXIT_KEY 'q'
 #include <ncurses.h>
 #include <stdlib.h>
 #include <time.h>
@@ -14,6 +14,7 @@
 #include "GameObject.h"
 #include "ERROR.h"
 #include "input.h"
+#include "Collision.h"
 
 Point2D ktov(int key);
 int snake_getScore();
@@ -35,6 +36,7 @@ int main(int argc, char** argv)
 
         Message* msg;
         game_AdvanceTick();
+        Collisions_detect();
 
         while((msg = Message_receive())!=NULL)
         {
@@ -48,13 +50,13 @@ int main(int argc, char** argv)
                     quit=true;
                     msg->handled==true;
                 }
-
-                printf("Warning: Message unhandled");
+                char errmsg[200];
+                sprintf(errmsg,"Warning: Message %d for object %d unhandled",msg->type,msg->targetID);
+                ERROR(errmsg);
                 msg->handled==true;
             }
         }
         game_RenderScreen();
-
         Input_waitUntilNextFrame();
 
     }while(!quit)
@@ -63,19 +65,7 @@ int main(int argc, char** argv)
 
 
 /*
-    int c;
-    bool exit=false;
-
-    do
-    {
-        //Input
-        c=Input_scan();
-
-        //Game Logic
-        Snake_setVelocity(ktov(c));
         HUD_updateScore(snake_getScore());
-        Snake_msgHandler();
-
         if(Food_handleCollision(snake,food))
         {
             Snake_extend();
@@ -170,7 +160,7 @@ void game_Initialize()
 //    Hud* hud=HUD_Create(p);
 }
 
-messageHandler a_msgh[]={Snake_msgHandler,NULL,NULL};
+messageHandler a_msgh[]={Snake_msgHandler,Food_msgHandler,NULL};
 
 bool game_HandleMessage(Message* msg)
 {
@@ -196,7 +186,7 @@ void game_AdvanceTick()
 {
     for(int i=0;i<MAX_GAME_OBJECTS;i++)
     {
-        if(GameObject_Exists(i))
+        if(GameObject_Exists(i)&&a_msgh[GameObject_get(i)->ot]!=NULL)
         {
             Message_send(MT_TICK,i,NULL,0);
         }
@@ -215,4 +205,9 @@ void game_RenderScreen()
             a_rf[go->ot](go->objData);
         }
     }
+    if(ERROR_get()!=NULL)
+    {
+        mvaddstr(10,30,ERROR_get());
+    }
+
 }

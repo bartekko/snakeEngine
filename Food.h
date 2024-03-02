@@ -10,3 +10,4 @@ typedef struct{
 void* Food_create(Point2D _position);
 void Food_destroy(Food* food);
 int Food_handleCollision(Snake* snake, Food* food);
+bool Food_msgHandler(void* fd,Message* msg);

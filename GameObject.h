@@ -2,6 +2,9 @@
 #include "Message.h"
 #define MAX_GAME_OBJECTS 1024
 
+#define OBJID_INVALID -1;
+typedef int ObjectID;
+
 struct GameObject;
 
 typedef struct GameObject GameObject;
