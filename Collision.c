@@ -1,6 +1,7 @@
 #include "Collision.h"
 #include "Point2D.h"
 #include "GameObject.h"
+#include "Shape.h"
 
 #define MAX_COLLIDERS 64
 
@@ -13,7 +14,7 @@ typedef struct Collider
 
 Collider colliderList[MAX_COLLIDERS];
 
-int Collider_Register(int objectID,Point2D* p)
+int Collider_Register_Point(int objectID,Point2D* p)
 {
     for (size_t i = 0; i < MAX_COLLIDERS; i++)
     {

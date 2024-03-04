@@ -4,14 +4,13 @@ Phase 7:
 Refactor
 Phase 6:
 Track score
-Phase 5: 
+Phase 5:
 Kill snake on border-intersection
 Phase 4:
 Kill snake on self-intersection (Make sure to correctly handle new segments) DONE
-Phase 3: 
+Phase 3:
 Move snake on timer with input: DONE, WITH FOOD COLLISION
 Phase 2:
 Move snake on input: DONE
 phase 1:
 Render snake: DONE
-

@@ -20,6 +20,8 @@ Point2D ktov(int key);
 int snake_getScore();
 
 void game_Initialize();
+void game_Shutdown();
+
 bool game_HandleMessage(Message* msg);
 void game_AdvanceTick();
 void game_RenderScreen();
@@ -29,8 +31,7 @@ int main(int argc, char** argv)
 {
     game_Initialize();
     bool quit=false;
-    while (true)
-    {
+    do{
 
         Input_scan();
 
@@ -40,26 +41,31 @@ int main(int argc, char** argv)
 
         while((msg = Message_receive())!=NULL)
         {
-            game_HandleMessage(msg);
-            if(!msg->handled)
+            if(!game_HandleMessage(msg))
             {
                 if(msg->targetID==MSGTGT_GAME_ENGINE)
                 {
-                    msg_GameMessage* gameMessage=(msg_GameMessage*)&(msg->c.gameMessage);
-                    if(gameMessage->quit)
-                    quit=true;
+                    if(msg->type==MT_INPUT)
+                    {
+                        if(msg->c.input==IN_EXIT)
+                        {
+                            quit=true;
+                            msg->handled==true;
+                        }
+                    }
+                }else{
+                    char errmsg[200];
+                    sprintf(errmsg,"Warning: Message %d for object %d unhandled",msg->type,msg->targetID);
+                    ERROR(errmsg);
                     msg->handled==true;
                 }
-                char errmsg[200];
-                sprintf(errmsg,"Warning: Message %d for object %d unhandled",msg->type,msg->targetID);
-                ERROR(errmsg);
-                msg->handled==true;
             }
         }
         game_RenderScreen();
         Input_waitUntilNextFrame();
 
-    }while(!quit)
+    }while(!quit);
+    game_Shutdown();
     return 0;
 }
 
@@ -155,7 +161,7 @@ void game_Initialize()
     {
         GameObject_create(initialize_req[i]);
     }
-
+    Input_registerObject(MSGTGT_GAME_ENGINE,'q',IN_EXIT);
 
 //    Hud* hud=HUD_Create(p);
 }
@@ -164,6 +170,10 @@ messageHandler a_msgh[]={Snake_msgHandler,Food_msgHandler,NULL};
 
 bool game_HandleMessage(Message* msg)
 {
+    if(msg->targetID==MSGTGT_GAME_ENGINE)
+    {
+        return false;
+    }
     if(!GameObject_Exists(msg->targetID))
     {
         ERROR("Trying to pass message to nonexistent object");
@@ -210,4 +220,9 @@ void game_RenderScreen()
         mvaddstr(10,30,ERROR_get());
     }
 
+}
+
+void game_Shutdown()
+{
+    endwin();
 }

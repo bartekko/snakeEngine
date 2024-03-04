@@ -7,7 +7,7 @@ void* Food_create(Point2D position)
 {
     Food* food=malloc(sizeof(Food));
     food->position=position;
-    Collider_Register(1,&food->position);
+    Collider_Register_Point(1,&food->position);
     return food;
 }
 

@@ -5,7 +5,7 @@
 #include "stdlib.h"
 #include "input.h"
 #include "Collision.h"
-
+#include "ERROR.h"
 #include <string.h>
 #include <ncurses.h>
 
@@ -16,12 +16,12 @@ void* Snake_create(Point2D p)
     res->segments[0].y=p.y;
     res->velocity.x=1;
     res->segments[1]=Point2D_invalid;
-
+    res->head=&res->segments[0];
     Input_registerObject(0,'w',IN_UP);
     Input_registerObject(0,'s',IN_DOWN);
     Input_registerObject(0,'a',IN_LEFT);
     Input_registerObject(0,'d',IN_RIGHT);
-    Collider_Register(0,&res->segments[0]);
+    Collider_Register_Point(0,res->head);
 
     return (void*)res;
 
@@ -47,6 +47,8 @@ void Snake_setVelocity(Snake* snake, Vector2D newVelocity)
     }
 }
 
+//char errmsg[100]= "oops";
+
 bool Snake_msgHandler(void* sn, Message* msg)
 {
     Snake* snake=(Snake*)sn;
@@ -55,6 +57,11 @@ bool Snake_msgHandler(void* sn, Message* msg)
         case MT_TICK:
     for(int i=0;i<MAX_SNAKE_LENGTH-1;i++)
     {
+        //TODO: Make this not stupid
+
+//        sprintf(errmsg,"SnakeHead: p=%d x=%d y=%d",&snake->head,snake->head->x,snake->head->y);
+//        ERROR(errmsg);
+
         if(Point2D_isValid(snake->segments[i+1])){
             snake->segments[i].x=snake->segments[i+1].x;
             snake->segments[i].y=snake->segments[i+1].y;
@@ -63,6 +70,7 @@ bool Snake_msgHandler(void* sn, Message* msg)
         else{ //wait, what convention did I agree on with myself?
             snake->segments[i].x+=snake->velocity.x;
             snake->segments[i].y+=snake->velocity.y;
+            snake->head=&snake->segments[0];
             return true;
         }
         if(Snake_selfIntersects(snake))
